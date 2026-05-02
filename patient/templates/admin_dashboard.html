@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | HealthSync</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #ede9fe 0%, #f8fafc 50%, #e0f2fe 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 4%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(99, 102, 241, 0.08);
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+        }
+
+        .user-pill .role-badge {
+            background: var(--primary);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.6rem;
+            border-radius: 1rem;
+            text-transform: uppercase;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1.25rem;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1.75rem;
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .stat-card h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .stat-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.9rem 1rem;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.9rem;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-admin {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .badge-doctor {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+        }
+
+        .badge-patient {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .doctor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .doctor-mini {
+            background: #f8fafc;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .doctor-mini:hover {
+            border-color: var(--primary);
+        }
+
+        .doctor-mini .av {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+        }
+
+        .doctor-mini h4 {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .doctor-mini span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.4
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="/admin/dashboard" class="logo"><i class="fas fa-heart-pulse"></i> HealthSync</a>
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <div class="user-pill">
+                <i class="fas fa-shield-halved" style="color:var(--primary);"></i>
+                <span style="font-weight:600;">{{ user.name }}</span>
+                <span class="role-badge">Admin</span>
+            </div>
+            <a href="/logout" class="logout-btn"><i class="fas fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>🛡️ Admin Control Panel</h1>
+            <p>Full system overview — manage doctors, patients, and appointments</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(99,102,241,0.1);color:var(--primary);"><i
+                        class="fas fa-users"></i></div>
+                <div>
+                    <h3>{{ patients|length + 200 }}</h3>
+                    <p>Total Patients</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(16,185,129,0.1);color:#10b981;"><i
+                        class="fas fa-user-doctor"></i></div>
+                <div>
+                    <h3>{{ doctors|length }}</h3>
+                    <p>Active Doctors</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;"><i
+                        class="fas fa-hospital-user"></i></div>
+                <div>
+                    <h3>{{ patient_users|length }}</h3>
+                    <p>Registered Patients</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background:rgba(239,68,68,0.1);color:#ef4444;"><i
+                        class="fas fa-video"></i></div>
+                <div>
+                    <h3>Live</h3>
+                    <p>Consultations Active</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Department Distribution Image Overview -->
+        <div class="card" style="padding: 0; overflow: hidden; position: relative;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to right, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.6) 40%, transparent 100%); z-index: 1;"></div>
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200" alt="Department Analytics" style="width: 100%; height: 250px; object-fit: cover; display: block; border-radius: 2rem;">
+            <div style="position: absolute; top: 50%; left: 3rem; transform: translateY(-50%); z-index: 2; color: white;">
+                <h2 style="font-size: 2rem; margin-bottom: 0.5rem;"><i class="fas fa-chart-pie" style="color: var(--primary-light);"></i> Department Distribution</h2>
+                <p style="opacity: 0.85; max-width: 400px; line-height: 1.5;">Real-time analytics and resource allocation across Cardiology, Neurology, Pediatrics, and Dermatology departments.</p>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                    <span style="background: rgba(255,255,255,0.15); padding: 0.4rem 1rem; border-radius: 2rem; font-size: 0.8rem; font-weight: 700; backdrop-filter: blur(4px);">Cardiology: 35%</span>
+                    <span style="background: rgba(255,255,255,0.15); padding: 0.4rem 1rem; border-radius: 2rem; font-size: 0.8rem; font-weight: 700; backdrop-filter: blur(4px);">Neurology: 25%</span>
+                    <span style="background: rgba(255,255,255,0.15); padding: 0.4rem 1rem; border-radius: 2rem; font-size: 0.8rem; font-weight: 700; backdrop-filter: blur(4px);">Other: 40%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctors -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-user-doctor"></i> Medical Staff Panel</div>
+            <div class="doctor-grid">
+                {% for doc in doctors %}
+                <div class="doctor-mini">
+                    <div class="av">{{ doc.name[:2] }}</div>
+                    <h4>{{ doc.name }}</h4>
+                    <span>{{ doc.dept }}</span><br>
+                    <small style="color:#10b981; margin-top:0.5rem; display:block;"><span
+                            class="online-dot"></span>Online</small>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Patient Records Table -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-clipboard-list"></i> Patient Admission Records</div>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Problem</th>
+                            <th>Assigned Doctor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in patients %}
+                        <tr>
+                            <td><strong>{{ p.name }}</strong></td>
+                            <td>{{ p.age }}</td>
+                            <td>{{ p.gender }}</td>
+                            <td>{{ p.problem }}</td>
+                            <td><span class="badge badge-doctor">{{ p.doctor }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Registered Users -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-id-card"></i> Registered Portal Users</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Department / Doctor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in doctors %}
+                    <tr>
+                        <td><strong>{{ doc.name }}</strong></td>
+                        <td><span class="badge badge-doctor">Doctor</span></td>
+                        <td>{{ doc.dept }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% for pu in patient_users %}
+                    <tr>
+                        <td><strong>{{ pu.name }}</strong></td>
+                        <td><span class="badge badge-patient">Patient</span></td>
+                        <td>Assigned to {{ pu.get('doctor','—') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

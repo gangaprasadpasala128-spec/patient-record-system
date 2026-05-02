@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSync | Premium Patient Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(226, 232, 240, 0.5);
+            --shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background: radial-gradient(circle at top right, #e0f2fe 0%, #f8fafc 50%, #f1f5f9 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Premium Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: var(--glass-border);
+        }
+
+        .logo { font-size: 1.6rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        
+        .nav-links { display: flex; gap: 2.5rem; }
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1rem;
+            position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 5% 6rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
+        }
+
+        .hero h1 { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            letter-spacing: -0.025em; 
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #1e293b 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p { color: var(--text-muted); font-size: 1.25rem; max-width: 700px; margin: 0 auto; line-height: 1.6; }
+
+        .container { max-width: 1300px; margin: -4rem auto 4rem; padding: 0 2rem; }
+
+        /* Stats Grid - Enhanced */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            padding: 2.5rem 2rem;
+            border-radius: 2.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -15px rgba(99, 102, 241, 0.15); border-color: var(--primary-light); }
+
+        .stat-card i { 
+            font-size: 2.5rem; 
+            color: var(--primary); 
+            margin-bottom: 1.25rem;
+            background: rgba(99, 102, 241, 0.1);
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            border-radius: 1.5rem;
+            display: inline-block;
+        }
+
+        .stat-card h3 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main); }
+        .stat-card p { color: var(--text-muted); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Dashboard Layout */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            border: var(--glass-border);
+        }
+
+        .glass-card h2 { margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem; font-size: 1.75rem; font-weight: 700; color: var(--text-main); }
+        .glass-card h2 i { color: var(--primary); }
+
+        /* Form Styling */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .full-width { grid-column: span 2; }
+
+        .input-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 0.9rem; color: var(--text-main); }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 1.25rem;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #fff;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, textarea:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 1.25rem 2rem;
+            border: none;
+            border-radius: 1.25rem;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-primary:hover { 
+            background: var(--primary-light); 
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Search Bar Enhanced */
+        .search-container { margin-bottom: 2rem; position: relative; }
+        .search-container i { position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-container input { padding-left: 3.5rem; background: rgba(255, 255, 255, 0.8); }
+
+        /* Modern Table */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 0.75rem; }
+        th { text-align: left; padding: 1rem 1.5rem; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        tr.patient-row { 
+            background: white; 
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        tr.patient-row:hover { 
+            transform: scale(1.01); 
+            box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.05);
+        }
+
+        td { 
+            padding: 1.25rem 1.5rem; 
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        td:first-child { border-left: 1px solid #f1f5f9; border-radius: 1.25rem 0 0 1.25rem; }
+        td:last-child { border-right: 1px solid #f1f5f9; border-radius: 0 1.25rem 1.25rem 0; }
+
+        .patient-badge {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .info-name { font-weight: 700; display: block; color: var(--text-main); }
+        .info-sub { font-size: 0.85rem; color: var(--text-muted); }
+
+        .action-btns { display: flex; gap: 0.75rem; }
+        .btn-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .btn-delete { background: #fef2f2; color: var(--danger); }
+        .btn-delete:hover { background: var(--danger); color: white; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-up { animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">
+            <i class="fas fa-heart-pulse"></i> HealthSync
+        </a>
+        <div class="nav-links">
+            <a href="/" class="active">Home</a>
+            <a href="/records">Records</a>
+            <a href="/services">Services</a>
+            <a href="/consult">VitaConnect</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            {% if user %}
+            <a href="/dashboard" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-user-circle"></i> Dashboard</a>
+            {% else %}
+            <a href="/login" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1 class="animate-fade-up">Welcome to HealthSync Portal</h1>
+        <p class="animate-fade-up delay-1">The next generation of clinical management. Streamline patient records, monitor real-time health data, and provide world-class medical care with precision.</p>
+    </header>
+
+    <div class="container">
+        <!-- Dashboard Stats -->
+        <div class="stats-grid animate-fade-up delay-2">
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <h3>{{ total }}+</h3>
+                <p>Total Patients</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-hand-holding-heart"></i>
+                <h3>{{ resolved }}+</h3>
+                <p>Solutions Provided</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-user-doctor"></i>
+                <h3>24/7</h3>
+                <p>Active Support</p>
+            </div>
+            <div class="stat-card" style="border-color: var(--accent);">
+                <i class="fas fa-award" style="color: var(--accent); background: rgba(245, 158, 11, 0.1);"></i>
+                <h3>30+</h3>
+                <p>Years Experience</p>
+            </div>
+        </div>
+
+        <!-- NEW FEATURES HIGHLIGHT -->
+        <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 2rem; padding: 3rem; margin-bottom: 4rem; color: white; display: flex; align-items: center; justify-content: space-between; gap: 3rem; box-shadow: var(--shadow);">
+            <div style="flex: 1;">
+                <h2 style="font-size: 2rem; margin-bottom: 1rem;"><i class="fas fa-video" style="color: var(--primary-light);"></i> Direct Video Consultation & Secure Portals</h2>
+                <p style="color: #94a3b8; font-size: 1.1rem; line-height: 1.6; margin-bottom: 1.5rem;">
+                    We've upgraded our platform! Patients can now book slots and jump straight into a secure, <strong>Zoom-style live video call</strong> directly with their assigned doctors. 
+                </p>
+                <div style="display: flex; gap: 1rem;">
+                    <span style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 1rem; font-size: 0.9rem;"><i class="fas fa-user-shield text-primary"></i> Role-Based Login (Admin/Doctor/Patient)</span>
+                    <span style="background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 1rem; font-size: 0.9rem;"><i class="fas fa-laptop-medical text-primary"></i> 1-Click Video Calls</span>
+                </div>
+            </div>
+            <div style="flex: 0.6; text-align: center;">
+                <a href="/login" class="btn-primary" style="background: linear-gradient(135deg, var(--success), #06b6d4); font-size: 1.1rem; padding: 1.25rem 2rem; width: 100%; display: inline-block; text-decoration: none;">
+                    <i class="fas fa-sign-in-alt"></i> Sign In to Portal
+                </a>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 4rem; align-items: center;">
+            <div class="animate-fade-up" style="animation-delay: 0.5s;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--text-main);">Clinical Excellence at your Fingerprints.</h2>
+                <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.8; margin-bottom: 2rem;">
+                    HealthSync provides a centralized platform for managing patient journeys, from admission to discharge. Our integrated analytics help you monitor hospital capacity and specialist workload in real-time.
+                </p>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="/records" class="btn-primary" style="text-decoration: none; width: auto; padding: 1rem 2rem;">
+                        <i class="fas fa-list-check"></i> View Records
+                    </a>
+                    <a href="/services" class="btn-primary" style="text-decoration: none; width: auto; padding: 1rem 2rem; background: transparent; color: var(--primary); border: 2px solid var(--primary); box-shadow: none;">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+
+            <!-- Add Patient Card (Moved to right and prominent) -->
+            <div class="glass-card animate-fade-up" style="animation-delay: 0.6s;">
+                <h2 style="color: var(--primary);"><i class="fas fa-user-plus"></i> Patient Admission</h2>
+                <form action="/add_patient" method="POST">
+                    <div class="form-grid">
+                        <div class="input-group full-width">
+                            <label>Full Name</label>
+                            <input type="text" name="name" placeholder="Enter patient name" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Age</label>
+                            <input type="number" name="age" placeholder="Age" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Gender</label>
+                            <select name="gender" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Contact Number</label>
+                            <input type="text" name="contact" placeholder="+91 XXXXX XXXXX" required>
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Current Problem</label>
+                            <input type="text" name="problem" placeholder="Primary concern?" required>
+                        </div>
+                        <div class="input-group full-width">
+                            <label>Assigned Doctor</label>
+                            <select name="doctor" required>
+                                <option value="Dr. House (Cardiology)">Dr. House (Cardiology)</option>
+                                <option value="Dr. Strange (Neurology)">Dr. Strange (Neurology)</option>
+                                <option value="Dr. Watson (Orthopedics)">Dr. Watson (Orthopedics)</option>
+                                <option value="Dr. Grey (Pediatrics)">Dr. Grey (Pediatrics)</option>
+                                <option value="Dr. Shepherd (Dermatology)">Dr. Shepherd (Dermatology)</option>
+                                <option value="Dr. Smith (Ophthalmology)">Dr. Smith (Ophthalmology)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Register Patient
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Quick Action Button -->
+    <a href="/records" class="btn-primary" style="position: fixed; bottom: 2rem; right: 2rem; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; z-index: 1000; box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);">
+        <i class="fas fa-chart-line"></i>
+    </a>
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaConnect | Online Doctor Consultation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --bg: #f8fafc;
+            --card-bg: rgba(255,255,255,0.9);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body {
+            background: radial-gradient(circle at top left, #ede9fe 0%, #f8fafc 50%, #e0f2fe 100%);
+            color: var(--text-main); min-height: 100vh;
+        }
+
+        /* NAV */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(20px);
+            position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+        .logo { font-size: 1.6rem; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 0.75rem; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 600; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-links a.active { border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+
+        /* HERO */
+        .hero {
+            text-align: center; padding: 5rem 2rem 3rem;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+            color: white; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: url('https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&q=40&w=1400') center/cover;
+            opacity: 0.08;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1.25rem; border-radius: 2rem; font-size: 0.9rem; font-weight: 600; margin-bottom: 2rem;
+        }
+        .hero h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 1.25rem; position: relative; }
+        .hero p { font-size: 1.2rem; opacity: 0.85; max-width: 600px; margin: 0 auto 2.5rem; position: relative; }
+        .hero-stats { display: flex; justify-content: center; gap: 3rem; position: relative; }
+        .hero-stats div { text-align: center; }
+        .hero-stats strong { font-size: 2rem; font-weight: 800; display: block; }
+        .hero-stats span { font-size: 0.85rem; opacity: 0.8; }
+
+        .container { max-width: 1300px; margin: 0 auto; padding: 4rem 2rem; }
+
+        /* DOCTOR CARDS */
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { font-size: 2.2rem; font-weight: 800; color: var(--primary); }
+        .section-title p { color: var(--text-muted); margin-top: 0.5rem; }
+
+        .doctors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; margin-bottom: 5rem; }
+
+        .doctor-card {
+            background: var(--card-bg); border-radius: 2rem;
+            box-shadow: var(--shadow); border: 2px solid transparent;
+            transition: all 0.3s; cursor: pointer; overflow: hidden;
+        }
+        .doctor-card:hover, .doctor-card.selected {
+            border-color: var(--primary); transform: translateY(-6px);
+            box-shadow: 0 30px 60px -10px rgba(99,102,241,0.2);
+        }
+        .doctor-card img { width: 100%; height: 180px; object-fit: cover; object-position: center top; }
+        .doctor-info { padding: 1.5rem; }
+        .doctor-tag {
+            display: inline-block; font-size: 0.75rem; font-weight: 700;
+            background: rgba(99,102,241,0.1); color: var(--primary);
+            padding: 0.25rem 0.75rem; border-radius: 2rem; margin-bottom: 0.75rem;
+        }
+        .doctor-info h3 { font-size: 1.2rem; font-weight: 700; }
+        .doctor-info .rating { color: var(--accent); font-size: 0.85rem; margin: 0.35rem 0; }
+        .doctor-info .fee { font-weight: 700; color: var(--success); font-size: 1rem; }
+        .availability { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; }
+        .online-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        /* BOOKING FORM */
+        .booking-section {
+            background: var(--card-bg); border-radius: 2.5rem;
+            padding: 3rem; box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.5); margin-bottom: 5rem;
+        }
+        .booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+        @media(max-width:768px) { .booking-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 2rem; } }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-main); }
+        input, select, textarea {
+            width: 100%; padding: 1rem 1.25rem; border-radius: 1rem;
+            border: 1.5px solid #e2e8f0; outline: none; font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem; transition: 0.3s; background: white;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+
+        /* TIME SLOTS */
+        .time-slots { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+        .slot {
+            padding: 0.6rem 1.25rem; border-radius: 1rem; border: 1.5px solid #e2e8f0;
+            font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.2s;
+        }
+        .slot:hover { border-color: var(--primary); color: var(--primary); }
+        .slot.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .slot.booked { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; text-decoration: line-through; }
+
+        .btn-book {
+            width: 100%; padding: 1.25rem; background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white; border: none; border-radius: 1.25rem; font-size: 1.1rem;
+            font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 1rem;
+        }
+        .btn-book:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(99,102,241,0.35); }
+
+        /* VIDEO CALL UI */
+        .virtual-room {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-radius: 2.5rem; padding: 3rem; color: white; margin-bottom: 5rem;
+            position: relative; overflow: hidden;
+        }
+        .virtual-room::before {
+            content: ''; position: absolute; top: -50%; right: -20%;
+            width: 400px; height: 400px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,0.15), transparent);
+        }
+        .room-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+        .room-header h2 { font-size: 1.8rem; }
+        .live-badge {
+            background: #ef4444; padding: 0.4rem 1rem; border-radius: 2rem;
+            font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; animation: pulse 1.5s infinite;
+        }
+        .video-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .video-main {
+            background: rgba(255,255,255,0.05); border-radius: 1.5rem;
+            height: 280px; display: flex; align-items: center; justify-content: center;
+            position: relative; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .video-self {
+            background: rgba(255,255,255,0.08); border-radius: 1.25rem;
+            height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.1); gap: 1rem;
+        }
+        .avatar-circle {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700;
+        }
+        .video-controls {
+            display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem;
+        }
+        .ctrl-btn {
+            width: 55px; height: 55px; border-radius: 50%; border: none; cursor: pointer;
+            font-size: 1.2rem; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .ctrl-btn.normal { background: rgba(255,255,255,0.1); color: white; }
+        .ctrl-btn.normal:hover { background: rgba(255,255,255,0.2); }
+        .ctrl-btn.end { background: #ef4444; color: white; width: 65px; height: 65px; font-size: 1.4rem; }
+        .ctrl-btn.end:hover { background: #dc2626; }
+        .video-label { position: absolute; bottom: 1rem; left: 1rem; font-size: 0.85rem; font-weight: 600; opacity: 0.8; }
+
+        /* HOW IT WORKS */
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
+        .step-card {
+            background: var(--card-bg); border-radius: 2rem; padding: 2.5rem; text-align: center;
+            box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.5);
+        }
+        .step-num {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; font-size: 1.5rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;
+        }
+        .step-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .step-card p { font-size: 0.9rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo"><i class="fas fa-heart-pulse"></i> HealthSync</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/records">Records</a>
+            <a href="/services">Services</a>
+            <a href="/consult" class="active">VitaConnect</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            {% if user %}
+            <a href="/dashboard" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-user-circle"></i> Dashboard</a>
+            {% else %}
+            <a href="/login" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="hero-badge"><span class="online-dot"></span> Doctors Available Now</div>
+        <h1>VitaConnect<br>Consult a Doctor, Instantly</h1>
+        <p>Premium video consultations with certified specialists from the comfort of your home — 24/7, no queues.</p>
+        <div class="hero-stats">
+            <div><strong>50+</strong><span>Specialists Online</span></div>
+            <div><strong>4.9★</strong><span>Patient Rating</span></div>
+            <div><strong>15 min</strong><span>Avg. Wait Time</span></div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- HOW IT WORKS -->
+        <div class="section-title" style="margin-top: 2rem;">
+            <h2>How It Works</h2>
+            <p>Start your consultation in 3 simple steps</p>
+        </div>
+        <div class="steps-grid" style="margin-bottom: 5rem;">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>Choose a Doctor</h3>
+                <p>Browse our panel of certified specialists filtered by department, rating, and availability.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>Book a Slot</h3>
+                <p>Select a convenient time slot and fill in your health details before the appointment.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Join Video Call</h3>
+                <p>Connect with your doctor through our secure, crystal-clear HD video consultation room.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">4</div>
+                <h3>Get Prescription</h3>
+                <p>Receive your digital prescription and follow-up notes directly to your registered email.</p>
+            </div>
+        </div>
+
+        <!-- DOCTORS -->
+        <div class="section-title">
+            <h2>Available Specialists</h2>
+            <p>Click on a doctor to select them for your consultation</p>
+        </div>
+        <div class="doctors-grid">
+            <div class="doctor-card" onclick="selectDoctor(this, 'Dr. House')">
+                <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=600" alt="Dr. House">
+                <div class="doctor-info">
+                    <span class="doctor-tag">Cardiology</span>
+                    <h3>Dr. House</h3>
+                    <div class="rating">★★★★★ 4.9 (312 reviews)</div>
+                    <div class="fee"><i class="fas fa-indian-rupee-sign" style="font-size:0.9rem;"></i> 500 / session</div>
+                    <div class="availability"><span class="online-dot"></span> Available Now</div>
+                </div>
+            </div>
+            <div class="doctor-card" onclick="selectDoctor(this, 'Dr. Strange')">
+                <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=600" alt="Dr. Strange">
+                <div class="doctor-info">
+                    <span class="doctor-tag">Neurology</span>
+                    <h3>Dr. Strange</h3>
+                    <div class="rating">★★★★★ 4.8 (245 reviews)</div>
+                    <div class="fee"><i class="fas fa-indian-rupee-sign" style="font-size:0.9rem;"></i> 700 / session</div>
+                    <div class="availability"><span class="online-dot"></span> Available Now</div>
+                </div>
+            </div>
+            <div class="doctor-card" onclick="selectDoctor(this, 'Dr. Grey')">
+                <img src="https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=600" alt="Dr. Grey">
+                <div class="doctor-info">
+                    <span class="doctor-tag">Pediatrics</span>
+                    <h3>Dr. Grey</h3>
+                    <div class="rating">★★★★★ 5.0 (189 reviews)</div>
+                    <div class="fee"><i class="fas fa-indian-rupee-sign" style="font-size:0.9rem;"></i> 450 / session</div>
+                    <div class="availability"><span class="online-dot"></span> Available Now</div>
+                </div>
+            </div>
+            <div class="doctor-card" onclick="selectDoctor(this, 'Dr. Shepherd')">
+                <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=600" alt="Dr. Shepherd">
+                <div class="doctor-info">
+                    <span class="doctor-tag">Dermatology</span>
+                    <h3>Dr. Shepherd</h3>
+                    <div class="rating">★★★★☆ 4.7 (198 reviews)</div>
+                    <div class="fee"><i class="fas fa-indian-rupee-sign" style="font-size:0.9rem;"></i> 600 / session</div>
+                    <div class="availability" style="color: #f59e0b;"><i class="fas fa-clock"></i> Next slot: 3:30 PM</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOOKING FORM -->
+        <div class="booking-section">
+            <div class="section-title" style="text-align:left; margin-bottom: 2rem;">
+                <h2 style="font-size:1.8rem;">Book Your Consultation</h2>
+                <p>Fill the details below to confirm your appointment</p>
+            </div>
+            <div class="booking-grid">
+                <div>
+                    <div class="form-group">
+                        <label>Selected Doctor</label>
+                        <input type="text" id="selectedDoc" placeholder="Click a doctor card above" readonly style="background:#f8fafc; cursor:not-allowed;">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Full Name</label>
+                        <input type="text" placeholder="e.g. Rahul Sharma">
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" placeholder="+91 98765 43210">
+                    </div>
+                    <div class="form-group">
+                        <label>Appointment Date</label>
+                        <input type="date" id="apptDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Consultation Type</label>
+                        <select>
+                            <option>Video Call</option>
+                            <option>Audio Call</option>
+                            <option>Chat Only</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Choose Time Slot</label>
+                        <div class="time-slots">
+                            <div class="slot booked">9:00 AM</div>
+                            <div class="slot booked">9:30 AM</div>
+                            <div class="slot" onclick="pickSlot(this)">10:00 AM</div>
+                            <div class="slot" onclick="pickSlot(this)">10:30 AM</div>
+                            <div class="slot" onclick="pickSlot(this)">11:00 AM</div>
+                            <div class="slot" onclick="pickSlot(this)">2:00 PM</div>
+                            <div class="slot" onclick="pickSlot(this)">2:30 PM</div>
+                            <div class="slot" onclick="pickSlot(this)">3:00 PM</div>
+                            <div class="slot" onclick="pickSlot(this)">3:30 PM</div>
+                            <div class="slot" onclick="pickSlot(this)">4:00 PM</div>
+                            <div class="slot" onclick="pickSlot(this)">5:00 PM</div>
+                            <div class="slot" onclick="pickSlot(this)">6:00 PM</div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:1.5rem;">
+                        <label>Describe Your Symptoms</label>
+                        <textarea rows="5" placeholder="e.g. I have been experiencing chest pain and fatigue for the last 3 days..."></textarea>
+                    </div>
+                    <button class="btn-book" onclick="bookConsult()">
+                        <i class="fas fa-video"></i> &nbsp; Confirm & Book Consultation
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIDEO CALL PREVIEW -->
+        <div class="virtual-room">
+            <div class="room-header">
+                <div>
+                    <h2><i class="fas fa-video" style="color: var(--primary-light);"></i> Virtual Consultation Room</h2>
+                    <p style="color: rgba(255,255,255,0.6); margin-top:0.3rem;">Secure & Encrypted HD Video Call</p>
+                </div>
+                <div class="live-badge"><i class="fas fa-circle"></i> LIVE DEMO</div>
+            </div>
+            <div class="video-grid">
+                <div class="video-main">
+                    <div style="text-align:center;">
+                        <div class="avatar-circle" style="margin: 0 auto 1rem; width:100px; height:100px; font-size:2.5rem;">D</div>
+                        <p style="font-weight:600; font-size:1.1rem;">Dr. House — Cardiology</p>
+                        <p style="font-size:0.85rem; opacity:0.6; margin-top:0.3rem;">Video feed will appear here during consultation</p>
+                    </div>
+                    <div class="video-label"><i class="fas fa-microphone"></i> Dr. House · Speaking</div>
+                </div>
+                <div class="video-self">
+                    <div class="avatar-circle" style="background: linear-gradient(135deg, #10b981, #06b6d4); font-size:1.5rem;">YOU</div>
+                    <p style="font-size:0.9rem; opacity:0.7;">Your Camera</p>
+                    <p style="font-size:0.75rem; opacity:0.5;">Tap to preview</p>
+                </div>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn normal" title="Mute"><i class="fas fa-microphone"></i></button>
+                <button class="ctrl-btn normal" title="Camera"><i class="fas fa-video"></i></button>
+                <button class="ctrl-btn end" title="End Call"><i class="fas fa-phone-slash"></i></button>
+                <button class="ctrl-btn normal" title="Chat"><i class="fas fa-comment-dots"></i></button>
+                <button class="ctrl-btn normal" title="Share Screen"><i class="fas fa-desktop"></i></button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SUCCESS MODAL -->
+    <div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:2rem; padding:3rem; max-width:480px; width:90%; text-align:center;">
+            <div style="width:80px;height:80px;background:linear-gradient(135deg,#10b981,#06b6d4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:white;margin:0 auto 1.5rem;">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 style="color:#0f172a; margin-bottom:0.75rem;">Booking Confirmed!</h2>
+            <p style="color:#64748b; margin-bottom:2rem;">Your consultation has been scheduled. You can join the secure video room now.</p>
+            <div style="display:flex; gap:1rem; justify-content:center;">
+                <button onclick="joinConsultationCall()" style="background:linear-gradient(135deg,#10b981,#06b6d4);color:white;border:none;padding:1rem 2rem;border-radius:1rem;font-size:1rem;font-weight:700;cursor:pointer;">
+                    <i class="fas fa-video"></i> Join Call Now
+                </button>
+                <button onclick="closeModal()" style="background:#f1f5f9;color:#475569;border:none;padding:1rem 2rem;border-radius:1rem;font-size:1rem;font-weight:700;cursor:pointer;">
+                    Done
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Modal with Jitsi Meet for Consult page -->
+    <div class="video-modal" id="consultVideoModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:10000; flex-direction:column; align-items:center; justify-content:center;">
+        <button onclick="endConsultationCall()" style="position:absolute; top:1.5rem; right:1.5rem; background:rgba(255,255,255,0.15); border:none; color:white; width:45px; height:45px; border-radius:50%; font-size:1.2rem; cursor:pointer; transition:0.3s;"><i class="fas fa-times"></i></button>
+        <div style="color:white; text-align:center; margin-bottom:1.5rem;">
+            <h3 style="font-size:1.4rem; font-weight:800;"><i class="fas fa-video"></i> HealthSync Live Consultation</h3>
+            <p>Secure & Encrypted Session</p>
+        </div>
+        <iframe id="consult-jitsi-frame" src="" allow="camera; microphone; fullscreen; display-capture" style="width:min(960px,95vw); height:min(600px,80vh); border-radius:1.5rem; overflow:hidden; border:none;"></iframe>
+    </div>
+
+    <script>
+        function selectDoctor(card, name) {
+            document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            document.getElementById('selectedDoc').value = name;
+        }
+
+        function pickSlot(el) {
+            if (el.classList.contains('booked')) return;
+            document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function bookConsult() {
+            const selectedDoc = document.getElementById('selectedDoc').value;
+            if (!selectedDoc) {
+                alert("Please select a doctor first.");
+                return;
+            }
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        
+        function joinConsultationCall() {
+            const docName = document.getElementById('selectedDoc').value.replace(/\s+/g, '-').toLowerCase();
+            const userName = "{{ user.username if user else 'guest' }}";
+            const room = 'HealthSync-' + docName + '-' + userName;
+            const url = 'https://meet.jit.si/' + encodeURIComponent(room);
+            
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('consult-jitsi-frame').src = url;
+            document.getElementById('consultVideoModal').style.display = 'flex';
+        }
+        
+        function endConsultationCall() {
+            document.getElementById('consult-jitsi-frame').src = '';
+            document.getElementById('consultVideoModal').style.display = 'none';
+        }
+
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('apptDate').setAttribute('min', today);
+        document.getElementById('apptDate').value = today;
+    </script>
+
+</body>
+</html>

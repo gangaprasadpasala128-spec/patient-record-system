@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services | HealthSync Hospital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(226, 232, 240, 0.5);
+            --shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background: radial-gradient(circle at top left, #e0f2fe 0%, #f8fafc 50%, #f1f5f9 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logo { font-size: 1.6rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        
+        .nav-links { display: flex; gap: 2.5rem; }
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            transition: all 0.3s;
+            font-size: 1rem;
+            position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
+
+        .header-section { text-align: center; margin-bottom: 4rem; }
+        .header-section h1 { font-size: 3rem; font-weight: 800; color: var(--primary); margin-bottom: 1rem; }
+        .header-section p { color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem; }
+
+        .service-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 2.5rem;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .service-card:hover { transform: translateY(-10px); border-color: var(--primary-light); }
+
+        .service-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .service-content { padding: 2rem 2.5rem 2.5rem; }
+
+        .service-icon {
+            font-size: 1.8rem; color: var(--primary); 
+            width: 55px; height: 55px; line-height: 55px; background: white;
+            text-align: center; border-radius: 1.25rem;
+            position: absolute;
+            top: 190px;
+            right: 2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            z-index: 2;
+        }
+
+        .service-card h3 { font-size: 1.6rem; margin-bottom: 0.75rem; color: var(--text-main); font-weight: 700; }
+        
+        .department-info { margin-top: 1.25rem; border-top: 1px solid rgba(0, 0, 0, 0.05); padding-top: 1.25rem; }
+        .info-title { font-weight: 700; color: var(--primary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem; }
+        .info-list { list-style: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+        .info-list li { margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+        .info-list li::before { content: '•'; color: var(--primary); font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">
+            <i class="fas fa-heart-pulse"></i> HealthSync
+        </a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/records">Records</a>
+            <a href="/services" class="active">Services</a>
+            <a href="/consult">VitaConnect</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            {% if user %}
+            <a href="/dashboard" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-user-circle"></i> Dashboard</a>
+            {% else %}
+            <a href="/login" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-section">
+            <h1>Specialized Departments</h1>
+            <p>Providing world-class healthcare solutions through advanced medical technology and expert consultation.</p>
+        </div>
+
+        <div class="services-grid">
+            <!-- Cardiology -->
+            <div class="service-card" style="position: relative;">
+                <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&q=80&w=800" alt="Cardiology" class="service-img">
+                <div class="service-icon"><i class="fas fa-heart-pulse"></i></div>
+                <div class="service-content">
+                    <h3>Cardiology</h3>
+                    <p>Comprehensive heart care including diagnostic testing and advanced surgical procedures.</p>
+                    <div class="department-info">
+                        <span class="info-title">Conditions Treated</span>
+                        <ul class="info-list">
+                            <li>Heart Arrhythmias</li>
+                            <li>Coronary Artery Disease</li>
+                            <li>Heart Failure</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Neurology -->
+            <div class="service-card" style="position: relative;">
+                <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&q=80&w=800" alt="Neurology" class="service-img">
+                <div class="service-icon"><i class="fas fa-brain"></i></div>
+                <div class="service-content">
+                    <h3>Neurology</h3>
+                    <p>Expert care for brain, spine, and nervous system disorders using precision diagnostics.</p>
+                    <div class="department-info">
+                        <span class="info-title">Conditions Treated</span>
+                        <ul class="info-list">
+                            <li>Epilepsy & Seizures</li>
+                            <li>Stroke Management</li>
+                            <li>Alzheimer's Care</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pediatrics -->
+            <div class="service-card" style="position: relative;">
+                <img src="https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&q=80&w=800" alt="Pediatrics" class="service-img">
+                <div class="service-icon"><i class="fas fa-baby"></i></div>
+                <div class="service-content">
+                    <h3>Pediatrics</h3>
+                    <p>Compassionate healthcare for children, from newborns to teenagers.</p>
+                    <div class="department-info">
+                        <span class="info-title">Advanced Solutions</span>
+                        <ul class="info-list">
+                            <li>Childhood Immunization</li>
+                            <li>Developmental Screening</li>
+                            <li>Neonatal Intensive Care</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orthopedics -->
+            <div class="service-card" style="position: relative;">
+                <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=800" alt="Orthopedics" class="service-img">
+                <div class="service-icon"><i class="fas fa-bone"></i></div>
+                <div class="service-content">
+                    <h3>Orthopedics</h3>
+                    <p>Specialized treatment for bone and joint health including robotic surgery.</p>
+                    <div class="department-info">
+                        <span class="info-title">Advanced Solutions</span>
+                        <ul class="info-list">
+                            <li>Joint Replacement</li>
+                            <li>Spinal Surgery</li>
+                            <li>Sports Medicine</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ophthalmology -->
+            <div class="service-card" style="position: relative;">
+                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800" alt="Ophthalmology" class="service-img">
+                <div class="service-icon"><i class="fas fa-eye"></i></div>
+                <div class="service-content">
+                    <h3>Ophthalmology</h3>
+                    <p>Advanced vision care and surgical solutions for all eye-related conditions.</p>
+                    <div class="department-info">
+                        <span class="info-title">Specialized Treatments</span>
+                        <ul class="info-list">
+                            <li>Laser Vision Correction</li>
+                            <li>Glaucoma Management</li>
+                            <li>Retinal Surgery</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emergency Care -->
+            <div class="service-card" style="position: relative;">
+                <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=800" alt="Emergency" class="service-img">
+                <div class="service-icon"><i class="fas fa-truck-medical"></i></div>
+                <div class="service-content">
+                    <h3>Emergency Care</h3>
+                    <p>24/7 critical response and trauma management with zero wait-time policy.</p>
+                    <div class="department-info">
+                        <span class="info-title">Key Services</span>
+                        <ul class="info-list">
+                            <li>Critical Trauma Care</li>
+                            <li>ICU & Life Support</li>
+                            <li>Ambulance Network</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dermatology -->
+            <div class="service-card" style="position: relative;">
+                <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=800" alt="Dermatology" class="service-img">
+                <div class="service-icon"><i class="fas fa-sparkles"></i></div>
+                <div class="service-content">
+                    <h3>Dermatology</h3>
+                    <p>Expert skin health, aesthetic treatments, and skin cancer screenings.</p>
+                    <div class="department-info">
+                        <span class="info-title">Specialized Treatments</span>
+                        <ul class="info-list">
+                            <li>Acne & Scar Therapy</li>
+                            <li>Cosmetic Dermatology</li>
+                            <li>Skin Allergy Testing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Feedbacks Slider Section -->
+        <div style="margin-top: 8rem; text-align: center; overflow: hidden; padding-bottom: 4rem;">
+            <h2 style="font-size: 2.5rem; font-weight: 800; color: var(--primary); margin-bottom: 1rem;">Patient Success Stories</h2>
+            <p style="color: var(--text-muted); margin-bottom: 4rem;">Hear from those whose lives were transformed by our care.</p>
+            
+            <div class="testimonial-slider" style="position: relative; max-width: 900px; margin: 0 auto;">
+                <div class="slides-container" id="slides" style="display: flex; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); gap: 0;">
+                    <!-- Slide 1 -->
+                    <div class="slide" style="min-width: 100%; padding: 0 2rem;">
+                        <div class="service-card" style="padding: 3.5rem; text-align: left; background: white;">
+                            <div style="color: var(--accent); margin-bottom: 1.5rem; font-size: 1.2rem;">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p style="font-size: 1.4rem; font-style: italic; color: var(--text-main); line-height: 1.8; margin-bottom: 2rem;">"The Cardiology team at HealthSync is world-class. They provided precision care when I needed it most. I am forever grateful."</p>
+                            <div style="display: flex; align-items: center; gap: 1.2rem;">
+                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">RS</div>
+                                <div>
+                                    <h4 style="font-size: 1.1rem; margin-bottom: 0.1rem;">Rahul Sharma</h4>
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">Heart Surgery Patient</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2 -->
+                    <div class="slide" style="min-width: 100%; padding: 0 2rem;">
+                        <div class="service-card" style="padding: 3.5rem; text-align: left; background: white;">
+                            <div style="color: var(--accent); margin-bottom: 1.5rem; font-size: 1.2rem;">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p style="font-size: 1.4rem; font-style: italic; color: var(--text-main); line-height: 1.8; margin-bottom: 2rem;">"Best pediatric care in Nandyal. My son was so comfortable during his recovery. The nurses were like family."</p>
+                            <div style="display: flex; align-items: center; gap: 1.2rem;">
+                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #ec4899, #f472b6); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">PR</div>
+                                <div>
+                                    <h4 style="font-size: 1.1rem; margin-bottom: 0.1rem;">Priya Reddy</h4>
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">Mother of patient</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="slide" style="min-width: 100%; padding: 0 2rem;">
+                        <div class="service-card" style="padding: 3.5rem; text-align: left; background: white;">
+                            <div style="color: var(--accent); margin-bottom: 1.5rem; font-size: 1.2rem;">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <p style="font-size: 1.4rem; font-style: italic; color: var(--text-main); line-height: 1.8; margin-bottom: 2rem;">"When my father had a stroke, the emergency response was incredibly fast. The neurology team is the best in the state."</p>
+                            <div style="display: flex; align-items: center; gap: 1.2rem;">
+                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #10b981, #34d399); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;">VK</div>
+                                <div>
+                                    <h4 style="font-size: 1.1rem; margin-bottom: 0.1rem;">Vikram Kapoor</h4>
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">Family Support</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Dots -->
+                <div style="margin-top: 2.5rem; display: flex; justify-content: center; gap: 0.75rem;">
+                    <div class="dot active" onclick="setSlide(0)" style="width: 12px; height: 12px; border-radius: 50%; background: #cbd5e1; cursor: pointer; transition: 0.3s;"></div>
+                    <div class="dot" onclick="setSlide(1)" style="width: 12px; height: 12px; border-radius: 50%; background: #cbd5e1; cursor: pointer; transition: 0.3s;"></div>
+                    <div class="dot" onclick="setSlide(2)" style="width: 12px; height: 12px; border-radius: 50%; background: #cbd5e1; cursor: pointer; transition: 0.3s;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 3;
+        const slides = document.getElementById('slides');
+        const dots = document.querySelectorAll('.dot');
+
+        function setSlide(index) {
+            currentSlide = index;
+            slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            dots.forEach((dot, i) => {
+                dot.style.background = i === currentSlide ? '#6366f1' : '#cbd5e1';
+                dot.style.width = i === currentSlide ? '30px' : '12px';
+                dot.style.borderRadius = i === currentSlide ? '10px' : '50%';
+            });
+        }
+
+        // Auto slide
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            setSlide(currentSlide);
+        }, 5000);
+
+        // Initialize
+        setSlide(0);
+    </script>
+
+    <style>
+        .dot.active { background: var(--primary) !important; width: 30px !important; border-radius: 10px !important; }
+    </style>
+</body>
+</html>
+>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard | HealthSync</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary:#6366f1; --primary-light:#818cf8; --success:#10b981; --accent:#f59e0b; --danger:#ef4444; --text-main:#0f172a; --text-muted:#64748b; --shadow:0 20px 40px -10px rgba(0,0,0,0.08); }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Outfit',sans-serif; }
+        body { background:radial-gradient(circle at top left,#e0f2fe 0%,#f8fafc 55%,#ede9fe 100%); min-height:100vh; color:var(--text-main); }
+        nav { display:flex; justify-content:space-between; align-items:center; padding:1.2rem 4%; background:rgba(255,255,255,0.8); backdrop-filter:blur(20px); position:sticky; top:0; z-index:100; border-bottom:1px solid rgba(255,255,255,0.3); }
+        .logo { font-size:1.5rem; font-weight:800; color:var(--primary); display:flex; align-items:center; gap:0.6rem; text-decoration:none; }
+        .user-pill { display:flex; align-items:center; gap:0.75rem; background:rgba(16,185,129,0.08); padding:0.5rem 1.25rem; border-radius:2rem; }
+        .role-badge { background:var(--success); color:white; font-size:0.7rem; font-weight:700; padding:0.15rem 0.6rem; border-radius:1rem; text-transform:uppercase; }
+        .logout-btn { padding:0.5rem 1.25rem; background:var(--danger); color:white; border:none; border-radius:0.75rem; font-weight:700; cursor:pointer; font-size:0.85rem; text-decoration:none; }
+        .container { max-width:1000px; margin:0 auto; padding:3rem 2rem; }
+        .welcome-card { background:linear-gradient(135deg,#10b981,#06b6d4); color:white; border-radius:2rem; padding:2.5rem; margin-bottom:2.5rem; }
+        .welcome-card h2 { font-size:2rem; font-weight:800; }
+        .welcome-card p { opacity:0.85; margin-top:0.5rem; font-size:1rem; }
+        .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:2rem; }
+        @media(max-width:768px){ .grid2{grid-template-columns:1fr;} }
+        .card { background:white; border-radius:2rem; padding:2rem; box-shadow:var(--shadow); }
+        .card-title { font-size:1.15rem; font-weight:700; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.75rem; }
+        .card-title i { color:var(--primary); }
+
+        /* Doctor Profile */
+        .doc-profile { text-align:center; padding:1rem; }
+        .doc-avatar { width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:white; font-size:2rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; }
+        .doc-name { font-size:1.4rem; font-weight:800; }
+        .doc-dept { color:var(--text-muted); font-size:0.9rem; margin-bottom:1.25rem; }
+        .online-badge { background:rgba(16,185,129,0.1); color:#10b981; padding:0.4rem 1rem; border-radius:2rem; font-weight:700; font-size:0.85rem; display:inline-flex; align-items:center; gap:0.5rem; }
+        .online-dot { width:8px; height:8px; background:#10b981; border-radius:50%; animation:pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        /* Call Button */
+        .join-call-btn {
+            width:100%; padding:1.25rem; margin-top:1.5rem;
+            background:linear-gradient(135deg,#10b981,#06b6d4);
+            color:white; border:none; border-radius:1.25rem; font-size:1.1rem; font-weight:800; cursor:pointer; transition:0.3s;
+            display:flex; align-items:center; justify-content:center; gap:0.75rem;
+        }
+        .join-call-btn:hover { transform:translateY(-3px); box-shadow:0 15px 30px rgba(16,185,129,0.35); }
+
+        .tip-item { display:flex; gap:1rem; padding:1rem; background:#f8fafc; border-radius:1.25rem; margin-bottom:0.75rem; }
+        .tip-item i { color:var(--primary); font-size:1.2rem; padding-top:0.1rem; }
+        .tip-item strong { display:block; font-size:0.9rem; margin-bottom:0.15rem; }
+        .tip-item span { font-size:0.8rem; color:var(--text-muted); }
+
+        /* Video Modal */
+        .video-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:9999; flex-direction:column; align-items:center; justify-content:center; }
+        .video-modal.open { display:flex; }
+        .video-header { color:white; text-align:center; margin-bottom:1.5rem; }
+        .video-header h3 { font-size:1.4rem; font-weight:800; }
+        .video-close { position:absolute; top:1.5rem; right:1.5rem; background:rgba(255,255,255,0.15); border:none; color:white; width:45px; height:45px; border-radius:50%; font-size:1.2rem; cursor:pointer; transition:0.3s; }
+        .video-close:hover { background:rgba(239,68,68,0.7); }
+        #jitsi-frame { width:min(960px,95vw); height:min(600px,80vh); border-radius:1.5rem; overflow:hidden; border:none; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/patient/dashboard" class="logo"><i class="fas fa-heart-pulse"></i> HealthSync</a>
+    <div style="display:flex; align-items:center; gap:1rem;">
+        <div class="user-pill">
+            <i class="fas fa-hospital-user" style="color:var(--success);"></i>
+            <span style="font-weight:600;">{{ user.name }}</span>
+            <span class="role-badge">Patient</span>
+        </div>
+        <a href="/logout" class="logout-btn"><i class="fas fa-right-from-bracket"></i> Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Welcome -->
+    <div class="welcome-card">
+        <h2>Hello, {{ user.name }}! 👋</h2>
+        <p>Welcome to your personal health dashboard. Your dedicated doctor is ready to assist you anytime.</p>
+    </div>
+
+    <div class="grid2">
+        <!-- Doctor Card -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-user-doctor"></i> Your Dedicated Doctor</div>
+            <div class="doc-profile">
+                <div class="doc-avatar">{{ doctor.name[:2] if doctor.name else 'DR' }}</div>
+                <div class="doc-name">{{ doctor.name if doctor.name else 'Dr. Assigned' }}</div>
+                <div class="doc-dept">{{ doctor.dept if doctor.dept else 'General Medicine' }}</div>
+                <div class="online-badge"><span class="online-dot"></span> Available Now</div>
+                <button class="join-call-btn" onclick="joinCall()">
+                    <i class="fas fa-video"></i> Join Video Consultation
+                </button>
+            </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-lightbulb"></i> Before Your Call</div>
+            <div class="tip-item">
+                <i class="fas fa-wifi"></i>
+                <div><strong>Check Internet</strong><span>Ensure stable WiFi or 4G connection for a clear call.</span></div>
+            </div>
+            <div class="tip-item">
+                <i class="fas fa-microphone"></i>
+                <div><strong>Enable Mic & Camera</strong><span>Allow browser permission when prompted.</span></div>
+            </div>
+            <div class="tip-item">
+                <i class="fas fa-file-medical"></i>
+                <div><strong>Have Reports Ready</strong><span>Keep any test results or prescriptions nearby.</span></div>
+            </div>
+            <div class="tip-item">
+                <i class="fas fa-clock"></i>
+                <div><strong>Be On Time</strong><span>Join the call a few minutes early to avoid issues.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="card">
+        <div class="card-title"><i class="fas fa-grip-horizontal"></i> Quick Links</div>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+            <a href="/services" style="background:#f1f5f9;padding:0.9rem 1.5rem;border-radius:1rem;text-decoration:none;color:var(--text-main);font-weight:600;display:flex;align-items:center;gap:0.5rem;"><i class="fas fa-stethoscope" style="color:var(--primary);"></i> View Services</a>
+            <a href="/contact" style="background:#f1f5f9;padding:0.9rem 1.5rem;border-radius:1rem;text-decoration:none;color:var(--text-main);font-weight:600;display:flex;align-items:center;gap:0.5rem;"><i class="fas fa-phone" style="color:var(--success);"></i> Contact Hospital</a>
+            <a href="/about" style="background:#f1f5f9;padding:0.9rem 1.5rem;border-radius:1rem;text-decoration:none;color:var(--text-main);font-weight:600;display:flex;align-items:center;gap:0.5rem;"><i class="fas fa-info-circle" style="color:var(--accent);"></i> About HealthSync</a>
+        </div>
+    </div>
+</div>
+
+<!-- Video Modal with Jitsi Meet -->
+<div class="video-modal" id="videoModal">
+    <button class="video-close" onclick="endCall()"><i class="fas fa-times"></i></button>
+    <div class="video-header">
+        <h3><i class="fas fa-video"></i> HealthSync Live Consultation</h3>
+        <p>Connecting you with {{ doctor.name if doctor.name else 'your doctor' }} — Secure & Encrypted</p>
+    </div>
+    <iframe id="jitsi-frame" src="" allow="camera; microphone; fullscreen; display-capture"></iframe>
+</div>
+
+<script>
+    const doctorKey = "{{ user.get('doctor', 'general') }}";
+    const patientName = "{{ user.username }}";
+
+    function joinCall() {
+        // Same room as doctor uses — they share the same room string
+        const room = 'HealthSync-' + doctorKey + '-' + patientName;
+        const url = 'https://meet.jit.si/' + encodeURIComponent(room);
+        document.getElementById('jitsi-frame').src = url;
+        document.getElementById('videoModal').classList.add('open');
+    }
+    function endCall() {
+        document.getElementById('jitsi-frame').src = '';
+        document.getElementById('videoModal').classList.remove('open');
+    }
+</script>
+</body>
+</html>

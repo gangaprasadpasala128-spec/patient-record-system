@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard | HealthSync</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary:#6366f1; --primary-light:#818cf8; --success:#10b981; --accent:#f59e0b; --danger:#ef4444; --text-main:#0f172a; --text-muted:#64748b; --shadow:0 20px 40px -10px rgba(0,0,0,0.08); }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Outfit',sans-serif; }
+        body { background:radial-gradient(circle at bottom left,#ede9fe 0%,#f8fafc 60%,#e0f2fe 100%); min-height:100vh; color:var(--text-main); }
+        nav { display:flex; justify-content:space-between; align-items:center; padding:1.2rem 4%; background:rgba(255,255,255,0.8); backdrop-filter:blur(20px); position:sticky; top:0; z-index:100; border-bottom:1px solid rgba(255,255,255,0.3); }
+        .logo { font-size:1.5rem; font-weight:800; color:var(--primary); display:flex; align-items:center; gap:0.6rem; text-decoration:none; }
+        .user-pill { display:flex; align-items:center; gap:0.75rem; background:rgba(99,102,241,0.08); padding:0.5rem 1.25rem; border-radius:2rem; }
+        .role-badge { background:var(--primary); color:white; font-size:0.7rem; font-weight:700; padding:0.15rem 0.6rem; border-radius:1rem; text-transform:uppercase; }
+        .logout-btn { padding:0.5rem 1.25rem; background:var(--danger); color:white; border:none; border-radius:0.75rem; font-weight:700; cursor:pointer; font-size:0.85rem; text-decoration:none; }
+        .container { max-width:1200px; margin:0 auto; padding:2.5rem 2rem; }
+        .welcome-hero { background:linear-gradient(135deg,#6366f1,#8b5cf6); color:white; border-radius:2rem; padding:2.5rem; margin-bottom:2.5rem; display:flex; justify-content:space-between; align-items:center; }
+        .welcome-hero h2 { font-size:2rem; font-weight:800; }
+        .welcome-hero p { opacity:0.85; margin-top:0.5rem; }
+        .dept-tag { background:rgba(255,255,255,0.2); padding:0.5rem 1.25rem; border-radius:2rem; font-weight:700; margin-top:1rem; display:inline-block; }
+        .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-bottom:2.5rem; }
+        .stat-card { background:white; border-radius:1.75rem; padding:1.75rem; box-shadow:var(--shadow); }
+        .stat-card h3 { font-size:2rem; font-weight:800; color:var(--primary); }
+        .stat-card p { color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem; }
+        .grid2 { display:grid; grid-template-columns:1.2fr 1fr; gap:2rem; }
+        @media(max-width:900px){ .grid2{grid-template-columns:1fr;} .stats-row{grid-template-columns:1fr 1fr;} }
+        .card { background:white; border-radius:2rem; padding:2rem; box-shadow:var(--shadow); }
+        .card-title { font-size:1.2rem; font-weight:700; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.75rem; color:var(--text-main); }
+        .card-title i { color:var(--primary); }
+        .patient-row { display:flex; align-items:center; justify-content:space-between; padding:1rem; background:#f8fafc; border-radius:1.25rem; margin-bottom:0.75rem; transition:0.2s; }
+        .patient-row:hover { background:#f1f5f9; }
+        .patient-av { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:white; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .patient-info { flex:1; margin-left:0.75rem; }
+        .patient-info strong { display:block; font-size:0.95rem; }
+        .patient-info span { font-size:0.8rem; color:var(--text-muted); }
+
+        /* VIDEO CALL */
+        .call-btn { background:linear-gradient(135deg,#10b981,#06b6d4); color:white; border:none; padding:0.6rem 1.25rem; border-radius:0.75rem; font-weight:700; cursor:pointer; font-size:0.85rem; display:flex; align-items:center; gap:0.5rem; transition:0.3s; }
+        .call-btn:hover { transform:scale(1.05); box-shadow:0 8px 20px rgba(16,185,129,0.35); }
+        .video-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); z-index:9999; flex-direction:column; align-items:center; justify-content:center; }
+        .video-modal.open { display:flex; }
+        .video-header { color:white; text-align:center; margin-bottom:1.5rem; }
+        .video-header h3 { font-size:1.5rem; }
+        .video-header p { opacity:0.7; font-size:0.9rem; margin-top:0.25rem; }
+        .video-close { position:absolute; top:1.5rem; right:1.5rem; background:rgba(255,255,255,0.15); border:none; color:white; width:40px; height:40px; border-radius:50%; font-size:1.2rem; cursor:pointer; }
+        #jitsi-frame { width:min(960px,95vw); height:min(600px,80vh); border-radius:1.5rem; overflow:hidden; border:none; }
+
+        .schedule-item { padding:1rem; border-left:3px solid var(--primary); background:#f8fafc; border-radius:0 1rem 1rem 0; margin-bottom:0.75rem; }
+        .schedule-item .time { font-size:0.8rem; color:var(--text-muted); }
+        .schedule-item .name { font-weight:700; }
+        .online-dot { width:8px; height:8px; background:#10b981; border-radius:50%; display:inline-block; animation:pulse 1.5s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="/doctor/dashboard" class="logo"><i class="fas fa-heart-pulse"></i> HealthSync</a>
+    <div style="display:flex;align-items:center;gap:1rem;">
+        <div class="user-pill">
+            <i class="fas fa-user-doctor" style="color:var(--primary);"></i>
+            <span style="font-weight:600;">{{ user.name }}</span>
+            <span class="role-badge">Doctor</span>
+        </div>
+        <a href="/logout" class="logout-btn"><i class="fas fa-right-from-bracket"></i> Logout</a>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Welcome Hero -->
+    <div class="welcome-hero">
+        <div>
+            <h2>Good Day, {{ user.name }}! 👨‍⚕️</h2>
+            <p>You have {{ my_patients|length }} active patients today. Stay focused and deliver excellence.</p>
+            <span class="dept-tag"><i class="fas fa-stethoscope"></i> {{ user.dept }}</span>
+        </div>
+        <div style="text-align:center;">
+            <i class="fas fa-user-doctor" style="font-size:5rem;opacity:0.25;"></i>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-card"><h3>{{ my_patients|length }}</h3><p>Active Patients</p></div>
+        <div class="stat-card"><h3>{{ assigned_patients|length }}</h3><p>Portal Patients</p></div>
+        <div class="stat-card"><h3><span class="online-dot"></span> Live</h3><p>Video Consult Ready</p></div>
+    </div>
+
+    <div class="grid2">
+        <!-- Patients List -->
+        <div class="card">
+            <div class="card-title"><i class="fas fa-hospital-user"></i> My Admitted Patients</div>
+            {% if my_patients %}
+            {% for p in my_patients %}
+            <div class="patient-row">
+                <div class="patient-av">{{ p.name[:2] }}</div>
+                <div class="patient-info">
+                    <strong>{{ p.name }}</strong>
+                    <span>{{ p.problem }}</span>
+                </div>
+                <button class="call-btn" onclick="startCall('{{ p.name|replace(' ','-') }}')">
+                    <i class="fas fa-video"></i> Call
+                </button>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color:var(--text-muted); text-align:center; padding:2rem;">No admitted patients currently.</p>
+            {% endif %}
+
+            {% if assigned_patients %}
+            <div style="margin-top:1.5rem; border-top:1px solid #f1f5f9; padding-top:1.5rem;">
+                <p style="font-size:0.85rem; font-weight:700; color:var(--text-muted); margin-bottom:1rem;">PORTAL PATIENTS</p>
+                {% for ap in assigned_patients %}
+                <div class="patient-row">
+                    <div class="patient-av" style="background:linear-gradient(135deg,#10b981,#06b6d4);">{{ ap.name[:2] }}</div>
+                    <div class="patient-info">
+                        <strong>{{ ap.name }}</strong>
+                        <span><span class="online-dot"></span> Online — {{ ap.username }}</span>
+                    </div>
+                    <button class="call-btn" onclick="startCall('{{ ap.username }}')">
+                        <i class="fas fa-video"></i> Video Call
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Schedule & Info -->
+        <div>
+            <div class="card" style="margin-bottom:1.5rem;">
+                <div class="card-title"><i class="fas fa-calendar-check"></i> Today's Schedule</div>
+                <div class="schedule-item"><div class="time">10:00 AM</div><div class="name">Morning Rounds</div></div>
+                <div class="schedule-item"><div class="time">11:30 AM</div><div class="name">Video Consultation — Patient 1</div></div>
+                <div class="schedule-item"><div class="time">2:00 PM</div><div class="name">Review Lab Results</div></div>
+                <div class="schedule-item"><div class="time">4:30 PM</div><div class="name">Evening Check-up</div></div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fas fa-video"></i> Quick Video Call</div>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1rem;">Start an instant call with any patient using a shared room link.</p>
+                <input id="roomInput" placeholder="Enter patient name or room ID" style="width:100%;padding:0.9rem;border-radius:1rem;border:1.5px solid #e2e8f0;margin-bottom:0.75rem;font-family:'Outfit',sans-serif;font-size:0.9rem;outline:none;">
+                <button class="call-btn" style="width:100%;justify-content:center;padding:1rem;" onclick="startCall(document.getElementById('roomInput').value)">
+                    <i class="fas fa-video"></i> &nbsp; Start Video Consultation
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Modal with Jitsi -->
+<div class="video-modal" id="videoModal">
+    <button class="video-close" onclick="endCall()"><i class="fas fa-times"></i></button>
+    <div class="video-header">
+        <h3><i class="fas fa-video"></i> HealthSync Live Consultation</h3>
+        <p id="roomName">Connecting securely...</p>
+    </div>
+    <iframe id="jitsi-frame" src="" allow="camera; microphone; fullscreen; display-capture"></iframe>
+</div>
+
+<script>
+    function startCall(patientName) {
+        if (!patientName) { alert('Please enter a patient name.'); return; }
+        const room = 'HealthSync-{{ user.username }}-' + patientName.replace(/\s+/g, '-');
+        const url = 'https://meet.jit.si/' + encodeURIComponent(room);
+        document.getElementById('jitsi-frame').src = url;
+        document.getElementById('roomName').textContent = 'Room: ' + room;
+        document.getElementById('videoModal').classList.add('open');
+    }
+    function endCall() {
+        document.getElementById('jitsi-frame').src = '';
+        document.getElementById('videoModal').classList.remove('open');
+    }
+</script>
+</body>
+</html>

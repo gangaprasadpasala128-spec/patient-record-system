@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | HealthSync Hospital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background: radial-gradient(circle at top right, #e0f2fe 0%, #f8fafc 50%, #f1f5f9 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logo { font-size: 1.6rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        
+        .nav-links { display: flex; gap: 2.5rem; }
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            transition: all 0.3s;
+            font-size: 1rem;
+            position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .container { max-width: 1000px; margin: 4rem auto; padding: 0 2rem; }
+
+        .about-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 2.5rem;
+            padding: 4rem;
+            box-shadow: var(--shadow);
+            line-height: 1.8;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        h1 { color: var(--primary); font-size: 3rem; font-weight: 800; margin-bottom: 1.5rem; letter-spacing: -0.025em; }
+        h2 { color: var(--primary); margin-top: 3rem; margin-bottom: 1.5rem; font-weight: 700; }
+        
+        p { margin-bottom: 1.5rem; font-size: 1.15rem; color: #334155; }
+
+        .mission-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .mission-box {
+            background: rgba(99, 102, 241, 0.05);
+            padding: 2.5rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .mission-box i { font-size: 2.5rem; color: var(--primary); margin-bottom: 1.5rem; }
+        .mission-box h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 3rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: transform 0.3s;
+        }
+        .back-home:hover { transform: translateX(-5px); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">
+            <i class="fas fa-heart-pulse"></i> HealthSync
+        </a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/records">Records</a>
+            <a href="/services">Services</a>
+            <a href="/consult">VitaConnect</a>
+            <a href="/about" class="active">About</a>
+            <a href="/contact">Contact</a>
+            {% if user %}
+            <a href="/dashboard" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-user-circle"></i> Dashboard</a>
+            {% else %}
+            <a href="/login" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Hero Image -->
+        <div class="animate-fade-up" style="margin-bottom: 3rem; border-radius: 2.5rem; overflow: hidden; height: 400px; box-shadow: var(--shadow); position: relative;">
+            <div style="background-image: url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1200'); background-size: cover; background-position: center; width: 100%; height: 100%;"></div>
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); padding: 3rem; color: white;">
+                <h1 style="color: white; margin: 0; font-size: 3.5rem;">Clinical Excellence Since 1994</h1>
+            </div>
+        </div>
+
+        <div class="about-content animate-fade-up" style="animation-delay: 0.2s;">
+            <p style="font-size: 1.3rem; font-weight: 500; color: var(--primary); margin-bottom: 2rem;">
+                Empowering Lives Through Advanced Medical Innovation.
+            </p>
+            
+            <p>
+                HealthSync Hospital has been a leader in the medical field for over <strong>30 years</strong>. Our journey began with a simple mission: to make world-class healthcare accessible to everyone in Nandyal and beyond. Today, we stand as one of the most trusted names in the region, known for our precision, empathy, and technological superiority.
+            </p>
+            
+            <p>
+                Our facility is not just a building; it is a center of hope where the latest in **robotic surgery**, **AI-driven diagnostics**, and **preventative care** come together to provide a seamless patient experience.
+            </p>
+
+            <div class="mission-grid">
+                <div class="mission-box">
+                    <i class="fas fa-handshake-angle"></i>
+                    <h3>Patient First</h3>
+                    <p>Every decision we make starts and ends with the well-being of our patients. Compassion is our core medicine.</p>
+                </div>
+                <div class="mission-box">
+                    <i class="fas fa-microscope"></i>
+                    <h3>Innovation</h3>
+                    <p>We invest heavily in the latest medical research and state-of-the-art diagnostic equipment for accurate results.</p>
+                </div>
+                <div class="mission-box">
+                    <i class="fas fa-shield-heart"></i>
+                    <h3>Trust & Safety</h3>
+                    <p>Adhering to the highest global standards of safety and hygiene to ensure a risk-free environment for healing.</p>
+                </div>
+                <div class="mission-box">
+                    <i class="fas fa-users-gear"></i>
+                    <h3>Expert Care</h3>
+                    <p>A multi-disciplinary team of world-renowned specialists working together for your holistic recovery.</p>
+                </div>
+            </div>
+
+            <h2 style="text-align: center; margin-top: 5rem;">Our Legacy Timeline</h2>
+            <div style="margin-top: 3rem; border-left: 3px solid var(--primary); padding-left: 2rem; margin-left: 1rem;">
+                <div style="margin-bottom: 2.5rem; position: relative;">
+                    <div style="position: absolute; left: -2.75rem; top: 0; width: 1.5rem; height: 1.5rem; background: var(--primary); border-radius: 50%; border: 4px solid white;"></div>
+                    <h4 style="font-size: 1.3rem; color: var(--primary);">1994 - The Foundation</h4>
+                    <p style="font-size: 1rem; margin-top: 0.5rem;">HealthSync was established as a primary care clinic with a 10-bed capacity.</p>
+                </div>
+                <div style="margin-bottom: 2.5rem; position: relative;">
+                    <div style="position: absolute; left: -2.75rem; top: 0; width: 1.5rem; height: 1.5rem; background: var(--primary); border-radius: 50%; border: 4px solid white;"></div>
+                    <h4 style="font-size: 1.3rem; color: var(--primary);">2010 - Digital Transformation</h4>
+                    <p style="font-size: 1rem; margin-top: 0.5rem;">Implemented one of the region's first fully electronic medical record systems.</p>
+                </div>
+                <div style="margin-bottom: 2.5rem; position: relative;">
+                    <div style="position: absolute; left: -2.75rem; top: 0; width: 1.5rem; height: 1.5rem; background: var(--primary); border-radius: 50%; border: 4px solid white;"></div>
+                    <h4 style="font-size: 1.3rem; color: var(--primary);">2024 - AI Integrated Care</h4>
+                    <p style="font-size: 1rem; margin-top: 0.5rem;">Inaugurated our advanced Robotics and AI-assisted surgery wing.</p>
+                </div>
+            </div>
+
+            <h2 style="text-align: center; margin-top: 5rem; margin-bottom: 3rem;">Meet Our Specialists</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem;">
+                <div class="mission-box" style="padding: 0; text-align: center; overflow: hidden;">
+                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=400" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div style="padding: 1.5rem;">
+                        <h4 style="color: var(--primary);">Dr. House</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Cardiology Lead</p>
+                    </div>
+                </div>
+                <div class="mission-box" style="padding: 0; text-align: center; overflow: hidden;">
+                    <img src="https://images.unsplash.com/photo-1527613426441-4da17471b66d?auto=format&fit=crop&q=80&w=400" style="width: 100%; height: 200px; object-fit: cover; object-position: center;">
+                    <div style="padding: 1.5rem;">
+                        <h4 style="color: var(--primary);">Dr. Grey</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Pediatrics Specialist</p>
+                    </div>
+                </div>
+                <div class="mission-box" style="padding: 0; text-align: center; overflow: hidden;">
+                    <img src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&q=80&w=400" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div style="padding: 1.5rem;">
+                        <h4 style="color: var(--primary);">Dr. Strange</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Neurology Head</p>
+                    </div>
+                </div>
+                <div class="mission-box" style="padding: 0; text-align: center; overflow: hidden;">
+                    <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div style="padding: 1.5rem;">
+                        <h4 style="color: var(--primary);">Dr. Shepherd</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Dermatology Lead</p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="/" class="back-home"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthSync | Management Records</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(226, 232, 240, 0.5);
+            --shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background: radial-gradient(circle at bottom left, #e0f2fe 0%, #f8fafc 50%, #f1f5f9 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: var(--glass-border);
+        }
+
+        .logo { font-size: 1.6rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        
+        .nav-links { display: flex; gap: 2.5rem; }
+        .nav-links a { 
+            text-decoration: none; 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            transition: all 0.3s;
+            font-size: 1rem;
+            position: relative;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .container { max-width: 1300px; margin: 3rem auto; padding: 0 2rem; }
+
+        .dashboard-header {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .dashboard-header h1 { font-size: 2.5rem; font-weight: 800; color: var(--text-main); }
+        .dashboard-header p { color: var(--text-muted); font-size: 1.1rem; }
+
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            border: var(--glass-border);
+            height: fit-content;
+        }
+
+        .glass-card h2 { margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem; font-size: 1.5rem; font-weight: 700; }
+        .glass-card h2 i { color: var(--primary); }
+
+        /* Search Bar */
+        .search-container { margin-bottom: 2rem; position: relative; }
+        .search-container i { position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-container input { 
+            width: 100%;
+            padding: 1rem 1.25rem 1rem 3.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 1.25rem;
+            outline: none;
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        /* Modern Table */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 0.75rem; }
+        th { text-align: left; padding: 1rem 1.5rem; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        tr.patient-row { background: white; transition: all 0.3s ease; }
+        tr.patient-row:hover { transform: scale(1.005); box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.05); }
+
+        td { padding: 1.25rem 1.5rem; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
+        td:first-child { border-left: 1px solid #f1f5f9; border-radius: 1.25rem 0 0 1.25rem; }
+        td:last-child { border-right: 1px solid #f1f5f9; border-radius: 0 1.25rem 1.25rem 0; }
+
+        .patient-badge { display: flex; align-items: center; gap: 1rem; }
+        .avatar {
+            width: 45px; height: 45px; border-radius: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;
+        }
+
+        .info-name { font-weight: 700; display: block; color: var(--text-main); }
+        .info-sub { font-size: 0.85rem; color: var(--text-muted); }
+
+        .btn-delete {
+            width: 38px; height: 38px; border-radius: 0.85rem;
+            display: flex; align-items: center; justify-content: center;
+            background: #fef2f2; color: var(--danger); text-decoration: none; transition: all 0.2s;
+        }
+        .btn-delete:hover { background: var(--danger); color: white; }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up { animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/" class="logo">
+            <i class="fas fa-heart-pulse"></i> HealthSync
+        </a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/records" class="active">Management Records</a>
+            <a href="/services">Services</a>
+            <a href="/consult">VitaConnect</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            {% if user %}
+            <a href="/dashboard" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-user-circle"></i> Dashboard</a>
+            {% else %}
+            <a href="/login" style="background: var(--primary); color: white; padding: 0.4rem 1rem; border-radius: 1rem;"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="dashboard-header animate-fade-up">
+            <div>
+                <h1>Management Records</h1>
+                <p>Monitor patient distribution and clinical analytics in real-time.</p>
+            </div>
+            <div style="text-align: right;">
+                <span style="font-weight: 700; color: var(--primary);">{{ total }} Total Admissions</span>
+            </div>
+        </header>
+
+        <!-- Records Column -->
+            <div class="glass-card animate-fade-up" style="animation-delay: 0.4s;">
+                <h2><i class="fas fa-hospital-user"></i> Active Patient Records</h2>
+                
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="patientSearch" placeholder="Search by name, problem, or specialist..." onkeyup="filterPatients()">
+                </div>
+
+                <div class="table-responsive">
+                    <table id="patientTable">
+                        <thead>
+                            <tr>
+                                <th>Patient Info</th>
+                                <th>Reason for Admission</th>
+                                <th>Specialist / Dept</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr class="patient-row">
+                                <td>
+                                    <div class="patient-badge">
+                                        <div class="avatar">{{ patient.name[0] }}</div>
+                                        <div>
+                                            <span class="info-name">{{ patient.name }}</span>
+                                            <span class="info-sub">{{ patient.age }} yrs • {{ patient.gender }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="info-name">{{ patient.problem }}</span>
+                                    <span class="info-sub">{{ patient.contact }}</span>
+                                </td>
+                                <td>
+                                    <span class="info-name" style="color: var(--primary);">{{ (patient.doctor.split('(')[0]).strip() if '(' in patient.doctor else patient.doctor }}</span>
+                                    <span class="info-sub" style="font-weight: 600; color: var(--accent);">{{ patient.doctor.split('(')[1].replace(')', '') if '(' in patient.doctor else 'General' }}</span>
+                                </td>
+                                <td>
+                                    <a href="/delete_patient/{{ patient._id }}" class="btn-delete" title="Discharge Patient" onclick="return confirm('Discharge patient?')">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Registered Portal Users Section -->
+                <h2 style="margin-top: 3rem;"><i class="fas fa-users-cog"></i> Registered Portal Users</h2>
+                <div class="table-responsive">
+                    <table id="registeredUsersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in registered_users %}
+                            <tr class="patient-row">
+                                <td><span class="info-name">{{ u.name }}</span></td>
+                                <td><span class="info-sub">{{ u.username }}</span></td>
+                                <td>
+                                    {% if u.role == 'admin' %}
+                                    <span style="background:rgba(239,68,68,0.1); color:#ef4444; padding:0.25rem 0.75rem; border-radius:1rem; font-size:0.75rem; font-weight:700; text-transform:uppercase;">Admin</span>
+                                    {% elif u.role == 'doctor' %}
+                                    <span style="background:rgba(99,102,241,0.1); color:#6366f1; padding:0.25rem 0.75rem; border-radius:1rem; font-size:0.75rem; font-weight:700; text-transform:uppercase;">Doctor</span>
+                                    {% else %}
+                                    <span style="background:rgba(16,185,129,0.1); color:#10b981; padding:0.25rem 0.75rem; border-radius:1rem; font-size:0.75rem; font-weight:700; text-transform:uppercase;">Patient</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if u.dept %}
+                                    <span class="info-sub">Dept: {{ u.dept }}</span>
+                                    {% elif u.doctor %}
+                                    <span class="info-sub">Assigned to: {{ u.doctor }}</span>
+                                    {% else %}
+                                    <span class="info-sub">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    <script>
+        function filterPatients() {
+            const input = document.getElementById('patientSearch');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('patientTable');
+            const tr = table.getElementsByClassName('patient-row');
+            for (let i = 0; i < tr.length; i++) {
+                let text = tr[i].textContent.toLowerCase();
+                tr[i].style.display = text.includes(filter) ? "" : "none";
+            }
+        }
+    </script>
+</body>
+</html>
